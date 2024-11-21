@@ -9,8 +9,7 @@
 #include "Serial.hpp"
 #include "SensorComs.hpp"
 
-#define LOG_AMOUNT // Log AMOUNT of datapoints in time, comment when coninious logging
-#define AMOUNT 50
+// #define AMOUNT 50 // Log AMOUNT of datapoints in time, comment when coninious logging
 // #define SINGLE    // Log single channel, comment when logging all channels
 #define CHANNEL 0 // select channel to log
 
@@ -28,6 +27,9 @@ void setup()
   nau = new nau7802(&sensorcom::WireSensorB);
   ads->resetStatus();
   SerialPC::waitForSerial();
+  // nau->calibrateInternal();
+  nau->calibrateExternal();
+
 #ifdef SINGLE
   SerialPC::printColumSingle();
   Serial.print("CH");
@@ -40,7 +42,7 @@ void setup()
 void loop()
 {
   LEDheartbeat::updateHeartBeat();
-#ifdef LOG_AMOUNT
+#ifdef AMOUNT
   if (i <= AMOUNT)
   {
 #endif
@@ -53,8 +55,9 @@ void loop()
 #else
   ads->printValues(SEPERATION_CHAR);
 #endif
+    // nau->printZeroOffset();
     Serial.println();
-    delay(10);
+    delay(1000);
 #ifdef LOG_AMOUNT
   }
 #endif

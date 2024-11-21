@@ -14,8 +14,11 @@ private:
 public:
     nau7802(TwoWire *wire);
     ~nau7802();
-    uint32_t readLoadCell();
+    int32_t readLoadCell();
     void printValue(const char *seperationCharacter = ";");
+    void printZeroOffset();
+    void calibrateInternal();
+    void calibrateExternal();
 };
 
 #endif
