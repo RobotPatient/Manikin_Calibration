@@ -14,7 +14,13 @@ private:
 public:
     nau7802(TwoWire *wire);
     ~nau7802();
-    int32_t readLoadCell();
+
+    /*!
+     * @brief Reads out load cell value and puts it in _value.
+     * given value is the weight (when calibrated) So no calulation is nessesary (since weight is already a force, to get the mass devide by g constant)
+     * @return _value. Measured weight on the load cell
+     */
+    int32_t readLoadCell(bool calibratedRead = true);
     void printValue(const char *seperationCharacter = ";");
     void printZeroOffset();
     void calibrateInternal();

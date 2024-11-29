@@ -55,8 +55,7 @@ void ads7138::printValues(const char *seperationCharacter)
 {
     for (int channel = 0; channel < (int)_size; ++channel)
     {
-        Serial.print(seperationCharacter);
-        Serial.print(_sensorData[channel]);
+        printValue(channel, seperationCharacter);
     }
 }
 

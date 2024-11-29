@@ -8,7 +8,8 @@ nau7802::nau7802(TwoWire *wire) : _wire{wire}
         Serial.println("No Load Cell Found");
         return;
     }
-    //loadCell->reset();
+    // loadCell->reset();
+    // loadCell->setLDO();
 }
 
 nau7802::~nau7802()
@@ -17,32 +18,41 @@ nau7802::~nau7802()
     _wire->end();
 }
 
-int32_t nau7802::readLoadCell()
+int32_t nau7802::readLoadCell(bool calibratedRead)
 {
     if (loadCell->available())
     {
-        _value = loadCell->getWeight(true, 64);
+        if (calibratedRead)
+        {
+            _value = loadCell->getWeight(true, 64);
+        }
+        else
+        {
+            _value = loadCell->getReading();
+        }
         return _value;
     }
     return 0;
+}
+
+void nau7802::printZeroOffset()
+{
+    Serial.print(";\t");
+    Serial.print(loadCell->getZeroOffset());
 }
 
 void nau7802::calibrateInternal()
 {
     loadCell->setSampleRate((uint8_t)320);
 
-    if(!loadCell->calibrateAFE(NAU7802_CALMOD_INTERNAL)){
+    if (!loadCell->calibrateAFE(NAU7802_CALMOD_INTERNAL))
+    {
         Serial.println("NAU: Calibration Fail");
     }
     loadCell->calculateZeroOffset(128);
     // loadCell->setZeroOffset(0);
     Serial.print("New Offset: ");
     Serial.println(loadCell->getZeroOffset());
-}
-
-void nau7802::printZeroOffset(){
-    Serial.print(";\t");
-    Serial.print(loadCell->getZeroOffset());
 }
 
 void nau7802::printValue(const char *seperationCharacter)
