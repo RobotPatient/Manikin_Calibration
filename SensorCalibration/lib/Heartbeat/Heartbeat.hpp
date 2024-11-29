@@ -3,19 +3,27 @@
 
 #include <Arduino.h>
 
-namespace LEDheartbeat
+namespace heartbeat
 {
-    unsigned long previousMillisHB = 0; // will store last time LED was updated
-    const long intervalHB_High = 500;   // interval at which to blink (milliseconds)
-    const long intervalHB_Low = 50;     // interval at which to blink (milliseconds)
-    int ledstate = LOW;
+    struct LED
+    {
+        unsigned long previousMillis = 0;        // will store last time LED was updated
+        const unsigned long interval_High = 500; // interval at which to blink (milliseconds)
+        const unsigned long interval_Low = 50;   // interval at which to blink (milliseconds)
+        int ledstate = LOW;
+    } LED;
+
+    struct polling
+    {
+        unsigned long previousMillis = 0;
+        const unsigned long intervalUpdate = 1000;
+    } polling;
 
     void setupLEDs()
     {
         pinMode(ledHb, OUTPUT);
         digitalWrite(ledHb, HIGH);
     }
-
     void ledOn()
     {
         digitalWrite(ledHb, HIGH);
@@ -28,15 +36,29 @@ namespace LEDheartbeat
     void updateHeartBeat()
     {
         unsigned long currentMillis = millis();
-        if(ledstate == LOW && currentMillis - previousMillisHB >= intervalHB_High){
-            ledstate = HIGH;
-            digitalWrite(ledHb, ledstate);
-            previousMillisHB = currentMillis;
-        } else if (ledstate == HIGH && currentMillis - previousMillisHB >= intervalHB_Low){
-            ledstate = LOW;
-            digitalWrite(ledHb, ledstate);
-            previousMillisHB = currentMillis;
+        if (LED.ledstate == LOW && currentMillis - LED.previousMillis >= LED.interval_High)
+        {
+            LED.ledstate = HIGH;
+            digitalWrite(ledHb, LED.ledstate);
+            LED.previousMillis = currentMillis;
         }
+        else if (LED.ledstate == HIGH && currentMillis - LED.previousMillis >= LED.interval_Low)
+        {
+            LED.ledstate = LOW;
+            digitalWrite(ledHb, LED.ledstate);
+            LED.previousMillis = currentMillis;
+        }
+    }
+
+    bool runPolling()
+    {
+        unsigned long currentMillis = millis();
+        bool result = currentMillis - polling.previousMillis >= polling.intervalUpdate;
+        if (result)
+        {
+            polling.previousMillis = currentMillis;
+        }
+        return result;
     }
 
 } // namespace LEDheartbeat

@@ -7,9 +7,7 @@ namespace SerialPC
 {
   void setupSerial()
   {
-    delay(1500);
-    Serial.begin(115200);
-    delay(1500);
+    Serial.begin(BAUDRATE);
   }
 
   void waitForSerial()
@@ -18,18 +16,16 @@ namespace SerialPC
     {
       ;
     }
-
-    delay(1500);
   }
 
   void printColum()
   {
-    Serial.println("Nr;LoadCell;CH1;CH2;CH3;CH4;CH5;CH6;CH7;CH8");
+    Serial.println(F("Nr;LoadCell;CH1;CH2;CH3;CH4;CH5;CH6;CH7;CH8"));
   }
 
   void printColumSingle()
   {
-    Serial.print("Nr;LoadCell;"); // excpect another colum
+    Serial.print(F("Nr;LoadCell;")); // excpect another colum
   }
 
 } // namespace SerialPC

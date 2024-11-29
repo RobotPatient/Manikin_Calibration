@@ -29,13 +29,13 @@ void ads7138::writeToRegister(byte registerAddr, byte command)
 int ads7138::readChannel(byte channel)
 {
     writeToRegister(CHANNEL_SEL, channel);
-    delay(10);
-    _wire->requestFrom(_deviceAddress, 2);
+    _wire->requestFrom(_deviceAddress, CHANNEL_BYTE_LENGHT);
 
-    if (_wire->available() > 2)
+    if (_wire->available() > CHANNEL_BYTE_LENGHT)
     {
         return 0;
     }
+
     _value = 0;
     _value = _wire->read();                 // Receive high byte
     _value = (_value << 8) | _wire->read(); // Receive low byte and combine with high byte
@@ -47,7 +47,6 @@ void ads7138::readValues()
     for (int channel = 0; channel < (int)_size; ++channel)
     {
         _sensorData[channel] = readChannel(channel);
-        delay(1); // Delay before next reading
     }
 }
 

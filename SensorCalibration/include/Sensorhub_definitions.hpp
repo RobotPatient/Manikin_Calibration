@@ -1,6 +1,8 @@
 #ifdef __SAMD21G18A__
+
 #define ADS7138_ADDR 0x10
 
+#define BAUDRATE 115200
 #define ledHb 14
 #define SEPERATION_CHAR ";"
 

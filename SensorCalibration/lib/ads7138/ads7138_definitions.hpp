@@ -135,5 +135,8 @@
 
 #define RESET_SYS_STAT 0xB
 
+// Constants
+
+#define CHANNEL_BYTE_LENGHT 2
 
 #endif

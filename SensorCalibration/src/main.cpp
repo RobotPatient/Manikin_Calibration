@@ -9,10 +9,6 @@
 #include "Serial.hpp"
 #include "SensorComs.hpp"
 
-// #define AMOUNT 50 // Log AMOUNT of datapoints in time, comment when coninious logging
-// #define SINGLE    // Log single channel, comment when logging all channels
-#define CHANNEL 0 // select channel to log
-
 ads7138 *ads;
 nau7802 *nau;
 
@@ -21,7 +17,7 @@ unsigned i = 0;
 void setup()
 {
   SerialPC::setupSerial();
-  LEDheartbeat::setupLEDs();
+  heartbeat::setupLEDs();
   sensorcom::wireSetup();
   ads = new ads7138(&sensorcom::WireSensorA, ADS7138_ADDR);
   nau = new nau7802(&sensorcom::WireSensorB);
@@ -30,35 +26,19 @@ void setup()
   // nau->calibrateInternal();
   nau->calibrateExternal();
 
-#ifdef SINGLE
-  SerialPC::printColumSingle();
-  Serial.print("CH");
-  Serial.println(CHANNEL);
-#else
   SerialPC::printColum();
-#endif
 }
 
 void loop()
 {
-  LEDheartbeat::updateHeartBeat();
-#ifdef AMOUNT
-  if (i <= AMOUNT)
+  heartbeat::updateHeartBeat();
+  if (heartbeat::runPolling())
   {
-#endif
     nau->readLoadCell();
     ads->readValues();
     Serial.print(i++);
     nau->printValue(SEPERATION_CHAR);
-#ifdef SINGLE
-    ads->printValue(CHANNEL, SEPERATION_CHAR);
-#else
-  ads->printValues(SEPERATION_CHAR);
-#endif
-    // nau->printZeroOffset();
+    ads->printValues(SEPERATION_CHAR);
     Serial.println();
-    delay(1000);
-#ifdef LOG_AMOUNT
   }
-#endif
 }

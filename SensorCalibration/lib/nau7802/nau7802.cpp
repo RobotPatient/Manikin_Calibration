@@ -64,12 +64,15 @@ void nau7802::printValue(const char *seperationCharacter)
 void nau7802::calibrateExternal()
 {
     Serial.println(F("Scale calibration"));
-
     Serial.println(F("Setup scale with no weight on it. Press a key when ready."));
     while (Serial.available())
+    {
         Serial.read(); // Clear anything in RX buffer
+    }
     while (Serial.available() == 0)
-        delay(10); // Wait for user to press key
+    {
+        // delay(10); // Wait for user to press key
+    }
 
     // Perform an external offset - this sets the NAU7802's internal offset register
     loadCell->calibrateAFE(NAU7802_CALMOD_OFFSET); // Calibrate using external offset
@@ -79,19 +82,27 @@ void nau7802::calibrateExternal()
 
     Serial.println(F("Place known weight on scale. Press a key when weight is in place and stable."));
     while (Serial.available())
+    {
         Serial.read(); // Clear anything in RX buffer
+    }
     while (Serial.available() == 0)
-        delay(10); // Wait for user to press key
+    {
+        // delay(10); // Wait for user to press key
+    }
 
     Serial.print(F("Please enter the weight, without units, currently sitting on the scale (for example '4.25'): "));
     while (Serial.available())
+    {
         Serial.read(); // Clear anything in RX buffer
+    }
     while (Serial.available() == 0)
-        delay(10); // Wait for user to press key
+    {
+        // delay(10); // Wait for user to press key
+    }
 
     // Read user input
     float weightOnScale = Serial.parseFloat();
-    Serial.println();
+    Serial.println(weightOnScale);
 
     // Tell the library how much weight is currently on it
     // We are sampling slowly, so we need to increase the timeout too
