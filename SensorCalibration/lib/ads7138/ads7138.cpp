@@ -17,13 +17,13 @@ void ads7138::resetStatus()
     writeToRegister(SYSTEM_STATUS, RESET_SYS_STAT);
 }
 
-void ads7138::writeToRegister(byte registerAddr, byte command)
+uint8_t ads7138::writeToRegister(byte registerAddr, byte command)
 {
     _wire->beginTransmission(_deviceAddress);
     _wire->write(SINGLE_WRITE);
     _wire->write(registerAddr);
     _wire->write(command);
-    _wire->endTransmission();
+    return _wire->endTransmission();
 }
 
 int ads7138::readChannel(byte channel)
