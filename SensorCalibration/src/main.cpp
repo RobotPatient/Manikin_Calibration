@@ -36,9 +36,13 @@ void loop()
   {
     nau->readLoadCell();
     ads->readValues();
-    Serial.print(i++);
-    nau->printValue(SEPERATION_CHAR);
-    ads->printValues(SEPERATION_CHAR);
-    Serial.println();
+    //TODO: write to memory? (sd card needed on hardware stuffs)
+    if (Serial)
+    {
+      Serial.print(i++);
+      nau->printValue(SEPERATION_CHAR);
+      ads->printValues(SEPERATION_CHAR);
+      Serial.println();
+    }
   }
 }
