@@ -78,6 +78,9 @@ void nau7802::calibrateExternal()
 
     Serial.print(F("New NAU7802 offset register: "));
     Serial.println(loadCell->getChannel1Offset());
+    // Serial.print(F("New zero offset: "));
+    // Serial.println(loadCell->getZeroOffset());
+    // TODO: Save offset to NVM
 
     Serial.println(F("Place known weight on scale. Press a key when weight is in place and stable."));
     while (Serial.available())
@@ -110,4 +113,5 @@ void nau7802::calibrateExternal()
     Serial.println(weightOnScale, 2);
     Serial.print(F("New library calibration factor: "));
     Serial.println(loadCell->getCalibrationFactor(), 2);
+    // TODO: Save factor to NVM
 }
