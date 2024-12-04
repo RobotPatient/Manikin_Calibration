@@ -8,6 +8,7 @@
 #include "Heartbeat.hpp"
 #include "Serial.hpp"
 #include "SensorComs.hpp"
+#include "LinearRegression.hpp"
 
 ads7138 *ads;
 nau7802 *nau;
@@ -36,7 +37,7 @@ void loop()
   {
     nau->readLoadCell();
     ads->readValues();
-    //TODO: write to memory? (sd card needed on hardware stuffs)
+    // TODO: write to memory? (sd card needed on hardware stuffs)
     if (Serial)
     {
       Serial.print(i++);
