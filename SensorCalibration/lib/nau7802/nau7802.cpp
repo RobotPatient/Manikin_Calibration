@@ -50,7 +50,6 @@ void nau7802::calibrateInternal()
         Serial.println("NAU: Calibration Fail");
     }
     loadCell->calculateZeroOffset(128);
-    // loadCell->setZeroOffset(0);
     Serial.print("New Offset: ");
     Serial.println(loadCell->getZeroOffset());
 }
@@ -71,7 +70,7 @@ void nau7802::calibrateExternal()
     }
     while (Serial.available() == 0)
     {
-        // delay(10); // Wait for user to press key
+        // Wait for user to press key
     }
 
     // Perform an external offset - this sets the NAU7802's internal offset register
@@ -87,7 +86,7 @@ void nau7802::calibrateExternal()
     }
     while (Serial.available() == 0)
     {
-        // delay(10); // Wait for user to press key
+        // Wait for user to press key
     }
 
     Serial.print(F("Please enter the weight, without units, currently sitting on the scale (for example '4.25'): "));
@@ -97,7 +96,7 @@ void nau7802::calibrateExternal()
     }
     while (Serial.available() == 0)
     {
-        // delay(10); // Wait for user to press key
+        // Wait for user to press key
     }
 
     // Read user input
