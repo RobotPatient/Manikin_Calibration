@@ -83,24 +83,10 @@ void nau7802::calibrateExternal()
     // TODO: Save offset to NVM
 
     Serial.println(F("Place known weight on scale. Press a key when weight is in place and stable."));
-    while (Serial.available())
-    {
-        Serial.read(); // Clear anything in RX buffer
-    }
-    while (Serial.available() == 0)
-    {
-        // Wait for user to press key
-    }
+    waitForUserKeyPress();
 
     Serial.print(F("Please enter the weight, without units, currently sitting on the scale (for example '4.25'): "));
-    while (Serial.available())
-    {
-        Serial.read(); // Clear anything in RX buffer
-    }
-    while (Serial.available() == 0)
-    {
-        // Wait for user to press key
-    }
+    waitForUserKeyPress();
 
     // Read user input
     float weightOnScale = Serial.parseFloat();
@@ -115,3 +101,15 @@ void nau7802::calibrateExternal()
     Serial.println(loadCell->getCalibrationFactor(), 2);
     // TODO: Save factor to NVM
 }
+
+void nau7802::waitForUserKeyPress()
+  {
+    while (Serial.available())
+    {
+        Serial.read(); // Clear anything in RX buffer
+    }
+    while (Serial.available() == 0)
+    {
+        // Wait for user to press key
+    }
+  }

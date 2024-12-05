@@ -14,6 +14,8 @@ private:
     TwoWire *_wire;
     int32_t _value;
 
+    void waitForUserKeyPress();
+
 public:
     nau7802(TwoWire *wire);
     ~nau7802();
