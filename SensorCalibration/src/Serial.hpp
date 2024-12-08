@@ -5,10 +5,7 @@
 
 namespace SerialPC
 {
-  void setupSerial()
-  {
-    Serial.begin(BAUDRATE);
-  }
+  void setupSerial() { Serial.begin(BAUDRATE); }
 
   void waitForSerial()
   {

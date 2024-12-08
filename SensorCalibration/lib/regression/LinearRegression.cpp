@@ -14,7 +14,6 @@ LinearRegression::LinearRegression(float *y, float *x, int n) : _n{n}
     }
 }
 
-
 LinearRegression::LinearRegression(float alpha, float beta)
 {
     _linearValue.alpha = alpha;
@@ -27,13 +26,14 @@ LinearRegression::~LinearRegression()
     delete _independentValue;
 }
 
-float LinearRegression::getThing(int x){
+float LinearRegression::getThing(int x)
+{
     return _dependantValue[x];
 }
 
 float LinearRegression::calcYMean()
 {
-    if(_yg != 0.0f) // _yg is already been calculated, no need to do it again
+    if (_yg != 0.0f) // _yg is already been calculated, no need to do it again
     {
         return _yg;
     }

@@ -1,7 +1,8 @@
-#include <unity.h>
 #include <Arduino.h>
-#include "Sensorhub_definitions.hpp"
+#include <unity.h>
+
 #include "Heartbeat.hpp"
+#include "Sensorhub_definitions.hpp"
 
 void test_Heartbeat_LED_Off(void)
 {

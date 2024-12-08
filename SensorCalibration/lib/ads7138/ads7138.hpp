@@ -60,7 +60,7 @@ public:
      * @param seperationCharacter seperation character to print right after the value
      */
     void printValue(int channel, const char *seperationCharacter = ";");
-    
+
     /*!
      * @brief Prints out all channels over UARTS with Serial. Expects Serial to be setup
      * @param seperationCharacter seperation character to print right after each value

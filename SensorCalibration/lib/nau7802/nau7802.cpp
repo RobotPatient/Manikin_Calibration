@@ -103,7 +103,7 @@ void nau7802::calibrateExternal()
 }
 
 void nau7802::waitForUserKeyPress()
-  {
+{
     while (Serial.available())
     {
         Serial.read(); // Clear anything in RX buffer
@@ -112,4 +112,4 @@ void nau7802::waitForUserKeyPress()
     {
         // Wait for user to press key
     }
-  }
+}

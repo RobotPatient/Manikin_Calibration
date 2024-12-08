@@ -6,8 +6,10 @@
 TEST_CASE("Testing linear regression functions")
 {
   static const int n = 5;
-  float x[n] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f}; //, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f};
-  float y[n] = {2.0f, 4.0f, 5.0f, 4.0f, 5.0f}; //, 6.02f, 6.5f, 8.1f, 8.2f, 9.9f};
+  float x[n] = {1.0f, 2.0f, 3.0f, 4.0f,
+                5.0f}; //, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f};
+  float y[n] = {2.0f, 4.0f, 5.0f, 4.0f,
+                5.0f}; //, 6.02f, 6.5f, 8.1f, 8.2f, 9.9f};
 
   struct linearValue myValue;
 
@@ -25,8 +27,9 @@ int main(int argc, char **argv)
   doctest::Context context;
 
   // BEGIN:: PLATFORMIO REQUIRED OPTIONS
-  context.setOption("success", true);     // Report successful tests
-  context.setOption("no-exitcode", true); // Do not return non-zero code on failed test case
+  context.setOption("success", true); // Report successful tests
+  context.setOption("no-exitcode",
+                    true); // Do not return non-zero code on failed test case
   // END:: PLATFORMIO REQUIRED OPTIONS
 
   // YOUR CUSTOM DOCTEST OPTIONS

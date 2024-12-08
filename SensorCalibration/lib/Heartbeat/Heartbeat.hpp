@@ -2,6 +2,7 @@
 #define HEARTBEAT_HPP
 
 #include <Arduino.h>
+#include "Sensorhub_definitions.hpp"
 
 namespace heartbeat
 {

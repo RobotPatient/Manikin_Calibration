@@ -2,13 +2,13 @@
 #include <Wire.h>
 #include <wiring_private.h>
 
+#include "Heartbeat.hpp"
+#include "LinearRegression.hpp"
+#include "SensorComs.hpp"
+#include "Sensorhub_definitions.hpp"
+#include "Serial.hpp"
 #include "ads7138.hpp"
 #include "nau7802.hpp"
-#include "Sensorhub_definitions.hpp"
-#include "Heartbeat.hpp"
-#include "Serial.hpp"
-#include "SensorComs.hpp"
-#include "LinearRegression.hpp"
 
 ads7138 *ads;
 nau7802 *nau;
