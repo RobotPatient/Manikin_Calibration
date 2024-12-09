@@ -14,6 +14,8 @@ ads7138 *ads;
 nau7802 *nau;
 
 unsigned i = 0;
+int n = 50;
+float referenceValues[50], vingerposition[50];
 
 void setup()
 {
@@ -40,10 +42,21 @@ void loop()
     // TODO: write to memory? (sd card needed on hardware stuffs)
     if (Serial)
     {
+      referenceValues[i] = nau->getValue();
+      vingerposition[i] = ads->getValue(0);
       Serial.print(i++);
       nau->printValue(SEPERATION_CHAR);
       ads->printValues(SEPERATION_CHAR);
       Serial.println();
+    }
+
+    if (i == n) // if there are n samples, calculate the regression values
+    {
+      LinearRegression fingerPositionRegression = LinearRegression(referenceValues, vingerposition, n);
+      struct linearValue myValue = fingerPositionRegression.calcAlphaBeta();
+      float r2 = fingerPositionRegression.calcR2();
+      float se = fingerPositionRegression.calcStandardError();
+      SerialPC::printRegression(myValue, r2, se);
     }
   }
 }
