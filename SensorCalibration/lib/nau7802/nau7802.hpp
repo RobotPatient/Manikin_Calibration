@@ -27,6 +27,8 @@ public:
      */
     int32_t readLoadCell(bool calibratedRead = true);
 
+    int32_t getValue();
+
     /*!
      * @brief Prints last measured value stored in _value to the Serial UART
      * @param seperationCharacter default ";". Prints this character before printing value

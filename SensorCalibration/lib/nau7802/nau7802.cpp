@@ -35,6 +35,11 @@ int32_t nau7802::readLoadCell(bool calibratedRead)
     return 0;
 }
 
+int32_t nau7802::getValue()
+{
+    return _value;
+}
+
 void nau7802::printZeroOffset()
 {
     Serial.print(";\t");
