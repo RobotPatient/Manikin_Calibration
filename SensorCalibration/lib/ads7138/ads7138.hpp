@@ -54,6 +54,8 @@ public:
      */
     void readValues();
 
+    int getValue(int channel);
+
     /*!
      * @brief Prints out channel value from _value[channel] to the UART with Serial. Expects Serial to be setup
      * @param channel channel to print to UART

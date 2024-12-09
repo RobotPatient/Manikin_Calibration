@@ -50,6 +50,11 @@ void ads7138::readValues()
     }
 }
 
+int ads7138::getValue(int channel)
+{
+    return _sensorData[channel];
+}
+
 void ads7138::printValues(const char *seperationCharacter)
 {
     for (int channel = 0; channel < (int)_size; ++channel)
