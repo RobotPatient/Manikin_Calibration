@@ -13,8 +13,8 @@
 ads7138 *ads;
 nau7802 *nau;
 
-unsigned i = 0;
-int n = 50;
+unsigned int i = 0;
+unsigned int n = 50;
 float referenceValues[50], vingerposition[50];
 
 void setup()
