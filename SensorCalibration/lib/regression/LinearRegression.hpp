@@ -12,14 +12,15 @@ class LinearRegression
 private:
     // PredictedDependentValue = linearValue.b1 * independentValue + linearValue.b0
     struct linearValue _linearValue;
-    int _sampleAmount;
+    unsigned int _sampleAmount;
     float _dependantMean = 0.0f, _r2, _standardError;
     float *_dependantValue, *_independentValue, _sampleAmountFloat;
+    const unsigned int _order = 2;
 
 public:
-    LinearRegression(float *y, float *x, int n);
-    LinearRegression(float alpha, float beta);
+    LinearRegression(float *y, float *x, unsigned int n);
     ~LinearRegression();
+    void setAlphaBeta(float alpha, float beta);
     linearValue calcAlphaBeta();
     float calcR2();
     float calcStandardError();
@@ -28,7 +29,7 @@ public:
     float getThing(int x);
 
 protected:
-    float calcYMean();
+    float calcAverage(float *numbers, unsigned int amount);
     float calcPredictedValue(float x);
 };
 

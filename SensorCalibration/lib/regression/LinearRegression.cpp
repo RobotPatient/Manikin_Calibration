@@ -1,23 +1,18 @@
 #include "LinearRegression.hpp"
-#include <cmath>
+#include <cmath> // used only for srqt()
 // #include <string.h>
 
-LinearRegression::LinearRegression(float *y, float *x, int n) : _sampleAmount{n}
+LinearRegression::LinearRegression(float *y, float *x, unsigned int n) : _sampleAmount{n}
 {
+    // change to ringbuffer with n size?
     _dependantValue = new float[_sampleAmount];
     _independentValue = new float[_sampleAmount];
     _sampleAmountFloat = (float)_sampleAmount;
-    for (int i = 0; i < _sampleAmount; i++)
+    for (unsigned int i = 0; i < _sampleAmount; i++)
     {
         _dependantValue[i] = y[i];
         _independentValue[i] = x[i];
     }
-}
-
-LinearRegression::LinearRegression(float alpha, float beta)
-{
-    _linearValue.b1 = alpha;
-    _linearValue.b0 = beta;
 }
 
 LinearRegression::~LinearRegression()
@@ -26,44 +21,38 @@ LinearRegression::~LinearRegression()
     delete _independentValue;
 }
 
+void LinearRegression::setAlphaBeta(float alpha, float beta)
+{
+    _linearValue.b1 = alpha;
+    _linearValue.b0 = beta;
+}
+
 float LinearRegression::getThing(int x)
 {
     return _dependantValue[x];
 }
 
-float LinearRegression::calcYMean()
+float LinearRegression::calcAverage(float *numbers, unsigned int amount)
 {
-    if (_dependantMean != 0.0f) // _dependantMean is already been calculated, no need to do it again
+    float sum = 0.0f;
+    for (unsigned int i = 0; i < amount; i++)
     {
-        return _dependantMean;
+        sum += numbers[i];
     }
-
-    _dependantMean = 0.0f;
-
-    for (int i = 0; i < _sampleAmount; i++)
-    {
-        _dependantMean += _dependantValue[i];
-    }
-    return _dependantMean /= _sampleAmountFloat;
+    return sum / (float)amount;
 }
 
 linearValue LinearRegression::calcAlphaBeta()
 {
-    // _dependantValue = b1 * _independentValue + betas
-    float xg = 0.0f, xy = 0.0f, x2 = 0.0f, xtussen;
-    float yg = calcYMean();
+    // _dependantValue = b1 * _independentValue + b0
+    float xy = 0.0f, x2 = 0.0f, xtussen;
+    float yg = calcAverage(_dependantValue, _sampleAmount);
+    float xg = calcAverage(_independentValue, _sampleAmount);
 
-    _linearValue.b1 = -1.0f;
-    _linearValue.b0 = -1.0f;
+    // _linearValue.b1 = -1.0f;
+    // _linearValue.b0 = -1.0f;
 
-    for (int i = 0; i < _sampleAmount; i++)
-    {
-        xg += _independentValue[i];
-    }
-
-    xg /= _sampleAmountFloat;
-
-    for (int i = 0; i < _sampleAmount; i++)
+    for (unsigned int i = 0; i < _sampleAmount; i++)
     {
         xtussen = _independentValue[i] - xg;
         xy += xtussen * (_dependantValue[i] - yg);
@@ -87,10 +76,10 @@ float LinearRegression::getYValue(int i)
 
 float LinearRegression::calcR2()
 {
-    float j = 0.0f, yl = 0.0f, yr = 0.0f, ytussenl, ytussenr;
-    float yg = calcYMean();
+    float yl = 0.0f, yr = 0.0f, ytussenl, ytussenr;
+    float yg = calcAverage(_dependantValue, _sampleAmount);
 
-    for (int i = 0; i < _sampleAmount; i++)
+    for (unsigned int i = 0; i < _sampleAmount; i++)
     {
         ytussenl = calcPredictedValue(_independentValue[i]) - yg;
         ytussenr = _dependantValue[i] - yg;
@@ -104,11 +93,11 @@ float LinearRegression::calcR2()
 float LinearRegression::calcStandardError()
 {
     float ytussen, ysom = 0.0f;
-    for (int i = 0; i < _sampleAmount; i++)
+    for (unsigned int i = 0; i < _sampleAmount; i++)
     {
         ytussen = calcPredictedValue(_independentValue[i]) - _dependantValue[i];
         ysom += ytussen * ytussen;
     }
 
-    return _standardError = sqrt(ysom / (_sampleAmountFloat - 2));
+    return _standardError = sqrt(ysom / (_sampleAmountFloat - _order));
 }
