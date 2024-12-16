@@ -46,21 +46,21 @@ linearValue LinearRegression::calcAlphaBeta()
 {
     // _dependantValue = b1 * _independentValue + b0
     float xy = 0.0f, x2 = 0.0f, xtussen;
-    float yg = calcAverage(_dependantValue, _sampleAmount);
-    float xg = calcAverage(_independentValue, _sampleAmount);
+    float dependantAverage = calcAverage(_dependantValue, _sampleAmount);
+    float independentAverage = calcAverage(_independentValue, _sampleAmount);
 
     // _linearValue.b1 = -1.0f;
     // _linearValue.b0 = -1.0f;
 
     for (unsigned int i = 0; i < _sampleAmount; i++)
     {
-        xtussen = _independentValue[i] - xg;
-        xy += xtussen * (_dependantValue[i] - yg);
+        xtussen = _independentValue[i] - independentAverage;
+        xy += xtussen * (_dependantValue[i] - dependantAverage);
         x2 += xtussen * xtussen;
     }
 
     _linearValue.b1 = xy / x2;
-    _linearValue.b0 = yg - _linearValue.b1 * xg;
+    _linearValue.b0 = dependantAverage - _linearValue.b1 * independentAverage;
     return _linearValue;
 }
 
@@ -77,12 +77,12 @@ float LinearRegression::getYValue(int i)
 float LinearRegression::calcR2()
 {
     float yl = 0.0f, yr = 0.0f, ytussenl, ytussenr;
-    float yg = calcAverage(_dependantValue, _sampleAmount);
+    float dependantAverage = calcAverage(_dependantValue, _sampleAmount);
 
     for (unsigned int i = 0; i < _sampleAmount; i++)
     {
-        ytussenl = calcPredictedValue(_independentValue[i]) - yg;
-        ytussenr = _dependantValue[i] - yg;
+        ytussenl = calcPredictedValue(_independentValue[i]) - dependantAverage;
+        ytussenr = _dependantValue[i] - dependantAverage;
         yl += ytussenl * ytussenl;
         yr += ytussenr * ytussenr;
     }
