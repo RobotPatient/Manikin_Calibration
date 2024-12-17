@@ -54,6 +54,11 @@ public:
      */
     void readValues();
 
+    /*!
+     * @brief Get the value of a given channel from the previous measured moment
+     * @param channel Channel number
+     * @return int value of the given channel
+     */
     int getValue(int channel);
 
     /*!
