@@ -10,14 +10,26 @@
 class nau7802
 {
 private:
-    NAU7802 *loadCell;
+    NAU7802 *_loadCell;
     TwoWire *_wire;
-    int32_t _value;
+    int32_t _value, _offset;
+    float _gain;
 
+    /*!
+     * @brief Clears the Serial buffer and waits until a key is pressed
+     */
     void waitForUserKeyPress();
 
 public:
+    /*!
+     * @brief Consturctor for the class
+     * @param wire Pointer to the TwoWire class. Should already be configured with the right pin configuration
+     */
     nau7802(TwoWire *wire);
+
+    /*!
+     * @brief ends TwoWire connection
+     */
     ~nau7802();
 
     /*!
@@ -27,6 +39,10 @@ public:
      */
     int32_t readLoadCell(bool calibratedRead = true);
 
+    /*!
+     * @brief get last measured value of the sensor
+     * @return int32_t, last measured value
+     */
     int32_t getValue();
 
     /*!
