@@ -4,7 +4,7 @@
 
 #define BAUDRATE 115200
 #define ledHb 14
-#define SEPERATION_CHAR ";"
+#define SEPERATION_CHAR " "
 
 // i2c system bus
 #define W0_SCL 27 // PA22
