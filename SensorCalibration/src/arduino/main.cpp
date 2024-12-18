@@ -27,7 +27,7 @@ void setup()
   ads->resetStatus();
   SerialPC::waitForSerial();
   // nau->calibrateInternal();
-  nau->calibrateExternal();
+  // nau->calibrateExternal();
 
   SerialPC::printColum();
 }
