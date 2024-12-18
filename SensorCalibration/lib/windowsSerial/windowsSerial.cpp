@@ -29,13 +29,13 @@ std::string windowsSerial::getPort()
     return _portName;
 }
 
-void windowsSerial::configureSerialPort()
+int windowsSerial::configureSerialPort()
 {
     _hSerial = CreateFile(_portName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (_hSerial == INVALID_HANDLE_VALUE)
     {
         std::cerr << "Error opening serial port" << std::endl;
-        exit(1);
+        return 0;
     }
 
     DCB dcbSerialParams = {0};
@@ -43,10 +43,10 @@ void windowsSerial::configureSerialPort()
     if (!GetCommState(_hSerial, &dcbSerialParams))
     {
         std::cerr << "Error getting serial port state" << std::endl;
-        exit(1);
+        return 0;
     }
 
-    dcbSerialParams.BaudRate = CBR_9600;
+    dcbSerialParams.BaudRate = CBR_115200;
     dcbSerialParams.ByteSize = 8;
     dcbSerialParams.StopBits = ONESTOPBIT;
     dcbSerialParams.Parity = NOPARITY;
@@ -54,7 +54,7 @@ void windowsSerial::configureSerialPort()
     if (!SetCommState(_hSerial, &dcbSerialParams))
     {
         std::cerr << "Error setting serial port state" << std::endl;
-        exit(1);
+        return 0;
     }
 
     COMMTIMEOUTS timeouts = {0};
@@ -67,8 +67,9 @@ void windowsSerial::configureSerialPort()
     if (!SetCommTimeouts(_hSerial, &timeouts))
     {
         std::cerr << "Error setting serial port timeouts" << std::endl;
-        exit(1);
+        return 0;
     }
+    return 1;
 }
 
 void windowsSerial::writeToSerialPort(const std::string &data)

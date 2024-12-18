@@ -17,7 +17,7 @@ public:
     void setNewPort(const std::string &portName);
     void setNewPort(int portNumber);
     std::string getPort();
-    void configureSerialPort();
+    int configureSerialPort();
     void writeToSerialPort(const std::string &data);
     std::string readFromSerialPort();
 };
