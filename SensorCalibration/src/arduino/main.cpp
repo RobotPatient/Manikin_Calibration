@@ -26,8 +26,17 @@ void setup()
   loadCell = new nau7802(&sensorcom::WireSensorB);
   fingerPositionSensor->resetStatus();
   SerialPC::waitForSerial();
+
+  // auto read = Serial.read();
+  // while (!Serial.available())
+  // {
+  // }
+  // int read = Serial.read();
+  // Serial.print(read);
+
+  loadCell->calibrateExternal();
+
   // loadCell->calibrateInternal();
-  // loadCell->calibrateExternal();
 
   SerialPC::printColum();
 }

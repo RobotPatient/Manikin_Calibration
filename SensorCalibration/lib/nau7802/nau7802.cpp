@@ -115,3 +115,11 @@ void nau7802::waitForUserKeyPress()
         // Wait for user to press key
     }
 }
+
+void nau7802::setCalibrationValues(int32_t newOffset, uint8_t newGain)
+{
+    _offset = newOffset;
+    _gain = newGain;
+    _loadCell->setZeroOffset(_offset);
+    _loadCell->setGain(_gain);
+}

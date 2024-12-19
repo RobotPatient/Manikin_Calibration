@@ -65,6 +65,8 @@ public:
      * @brief Calibrates externally by measuring the loadcell when nothing is on it and when a known weight is on the loadcell.
      */
     void calibrateExternal();
+
+    void setCalibrationValues(int32_t newOffset, uint8_t newGain);
 };
 
 #endif
