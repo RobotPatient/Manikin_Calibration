@@ -39,14 +39,14 @@ namespace SerialPC
     {
       return;
     }
-    Serial.print("alpha: ");
+    Serial.print("V ");
     Serial.print(myValue.b1);
-    Serial.print("; beta: ");
+    Serial.print(" ");
     Serial.print(myValue.b0);
-    Serial.print("; R2: ");
+    Serial.print(" ");
     Serial.print(r2);
-    Serial.print("; Standard Error: ");
-    Serial.println(se);
+    Serial.print(" ");
+    Serial.print(se);
   }
 
 } // namespace SerialPC

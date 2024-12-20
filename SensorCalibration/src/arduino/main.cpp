@@ -16,6 +16,35 @@ nau7802 *loadCell;
 unsigned int i = 0;
 unsigned int n = 50;
 float referenceValues[50], vingerposition[50];
+int sOffset = 0x0000;
+float sCalFactor = 0.0f;
+char receivedBytes[255];
+char receivedBytes2[255];
+
+void pain()
+{
+  while (Serial.available() == 0)
+  { // TODO: timeout?
+  }
+  for (int i = 0; i < Serial.available(); i++)
+  {
+    if (receivedBytes[i] == '|')
+    {
+      receivedBytes2[i] = (char)Serial.read();
+    }
+    else
+    {
+      receivedBytes[i] = (char)Serial.read();
+    }
+  }
+
+  sCalFactor = atof(receivedBytes);
+  sOffset = atoi(receivedBytes2);
+
+  Serial.println(sCalFactor);
+  Serial.println(sOffset);
+  loadCell->setCalibrationValues((uint32_t)sOffset, sCalFactor, 0);
+}
 
 void setup()
 {
@@ -27,16 +56,10 @@ void setup()
   fingerPositionSensor->resetStatus();
   SerialPC::waitForSerial();
 
-  // auto read = Serial.read();
-  // while (!Serial.available())
-  // {
-  // }
-  // int read = Serial.read();
-  // Serial.print(read);
+  // pain();
 
-  loadCell->calibrateExternal();
-
-  // loadCell->calibrateInternal();
+  // loadCell->calibrateExternal();
+  loadCell->setCalibrationValues(136054, 436.32, 0);
 
   SerialPC::printColum();
 }
@@ -44,6 +67,7 @@ void setup()
 void loop()
 {
   heartbeat::updateHeartBeat();
+
   if (heartbeat::runPolling())
   {
     loadCell->readLoadCell();

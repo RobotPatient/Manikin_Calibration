@@ -74,12 +74,15 @@ void nau7802::calibrateExternal()
     waitForUserKeyPress();
 
     // Perform an external offset - this sets the NAU7802's internal offset register
-    _loadCell->calibrateAFE(NAU7802_CALMOD_OFFSET); // Calibrate using external offset
+    // _loadCell->calibrateAFE(NAU7802_CALMOD_OFFSET); // Calibrate using external offset
+    _loadCell->calculateZeroOffset();
 
     _offset = _loadCell->getZeroOffset();
-    //_offset = _loadCell->getChannel1Offset();
+    // _offset = _loadCell->getChannel1Offset();
     Serial.print(F("New NAU7802 offset: "));
     Serial.println(_offset);
+    Serial.print(F("New channel 1 offset: "));
+    Serial.println(_loadCell->getChannel1Offset());
     // TODO: Save offset to NVM
 
     Serial.println(F("Place known weight on scale. Press a key when weight is in place and stable."));
@@ -95,12 +98,14 @@ void nau7802::calibrateExternal()
     // Tell the library how much weight is currently on it
     // We are sampling slowly, so we need to increase the timeout too
     _loadCell->calculateCalibrationFactor(weightOnScale, 64, 3000); // 64 samples at 40SPS. Use a timeout of 3 seconds
-    _gain = _loadCell->getCalibrationFactor();
-    // _gain = _loadCell->getChannel1Gain();
+    _calibrationFactor = _loadCell->getCalibrationFactor();
+    // _calibrationFactor = _loadCell->getChannel1Gain();
     Serial.print(F("Weight on scale: "));
     Serial.println(weightOnScale, 2);
     Serial.print(F("New library calibration factor: "));
-    Serial.println(_gain, 2);
+    Serial.println(_calibrationFactor, 2);
+    Serial.print(F("Offset: "));
+    Serial.println(_loadCell->getZeroOffset());
     // TODO: Save factor to NVM
 }
 
@@ -116,10 +121,11 @@ void nau7802::waitForUserKeyPress()
     }
 }
 
-void nau7802::setCalibrationValues(int32_t newOffset, uint8_t newGain)
+void nau7802::setCalibrationValues(int32_t newOffset, float newCalibrationFactor, int32_t newGain)
 {
     _offset = newOffset;
-    _gain = newGain;
+    _calibrationFactor = newCalibrationFactor;
+    // _loadCell->setChannel1Offset(newGain);
     _loadCell->setZeroOffset(_offset);
-    _loadCell->setGain(_gain);
+    _loadCell->setCalibrationFactor(_calibrationFactor);
 }
