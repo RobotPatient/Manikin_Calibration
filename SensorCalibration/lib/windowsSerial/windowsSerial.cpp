@@ -1,6 +1,6 @@
 #include "windowsSerial.hpp"
 
-windowsSerial::windowsSerial(const std::string &portName) : _portName{portName}
+windowsSerial::windowsSerial(const std::string &portName, int baudrate) : _portName{portName}, _baudrate{baudrate}
 {
     configureSerialPort();
 }
@@ -46,7 +46,7 @@ int windowsSerial::configureSerialPort()
         return 0;
     }
 
-    dcbSerialParams.BaudRate = CBR_115200;
+    dcbSerialParams.BaudRate = _baudrate;
     dcbSerialParams.ByteSize = 8;
     dcbSerialParams.StopBits = ONESTOPBIT;
     dcbSerialParams.Parity = NOPARITY;
@@ -83,11 +83,16 @@ void windowsSerial::writeToSerialPort(const std::string &data)
 
 std::string windowsSerial::readFromSerialPort()
 {
-    char buffer[256];
+    char buffer[1024];
     DWORD bytesRead;
     if (!ReadFile(_hSerial, buffer, sizeof(buffer), &bytesRead, NULL))
     {
         std::cerr << "Error reading from serial port" << std::endl;
     }
     return std::string(buffer, bytesRead);
+}
+
+void windowsSerial::serialToCout()
+{
+    std::cout << readFromSerialPort();
 }

@@ -9,9 +9,10 @@ class windowsSerial
 private:
     HANDLE _hSerial;
     std::string _portName = "COM5"; // Default com port
+    int _baudrate;
     /* data */
 public:
-    windowsSerial(const std::string &portName);
+    windowsSerial(const std::string &portName, int baudrate = 115200);
     windowsSerial();
     ~windowsSerial();
     void setNewPort(const std::string &portName);
@@ -20,6 +21,7 @@ public:
     int configureSerialPort();
     void writeToSerialPort(const std::string &data);
     std::string readFromSerialPort();
+    void serialToCout();
 };
 
 #endif
