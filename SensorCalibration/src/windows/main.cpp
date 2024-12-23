@@ -9,8 +9,7 @@
 #include "windowsConfigManager.hpp"
 #include "windowsLogger.hpp"
 
-#define CONFIG_PATH "C:\\Users\\thomasoe\\OneDrive - Capgemini\\Documents\\GitRepo\\Manikin_Calibration\\SensorCalibration\\config.ini"
-#define LOG_DIR "C:\\Users\\thomasoe\\OneDrive - Capgemini\\Documents\\GitRepo\\Manikin_Calibration\\SensorCalibration\\data\\"
+#define DEFAULT_LOG_DIR "C:"
 
 struct sampleData
 {
@@ -19,12 +18,22 @@ struct sampleData
     int loadCellValue;
 };
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc < 2)
+    {
+        std::cerr << "Usage: " << argv[0] << " <path to config.ini>" << std::endl;
+        return 1;
+    }
+
+    std::string configFilePath = argv[1];
+
     windowsSerial uart;
-    windowsConfigManager config(CONFIG_PATH);
+    windowsConfigManager config(configFilePath);
     int portNumber;
-    windowsLogger logger(LOG_DIR);
+    std::string logDir = config.readString("Settings", "LogDir", DEFAULT_LOG_DIR);
+
+    windowsLogger logger(logDir);
 
     std::string portName = config.readString("Settings", "Port", "ERROR");
     std::cout << "Port from settings: " << portName << std::endl;
@@ -37,25 +46,29 @@ int main()
 
     std::string writeb1 = config.readString("Reference_sensor", "b1", "0");
     std::string writeb0 = config.readString("Reference_sensor", "b0", "0");
-    std::cout << "b1: " << writeb1 << ", b0: " << writeb0 << std::endl;
-    uart.writeToSerialPort(writeb1 + "|" + writeb0);
-    std::string receivedData1 = uart.readFromSerialPort();
-    std::cout << receivedData1;
+    std::string writeSampleSize = config.readString("Reference_sensor", "SampleSize", "5");
+    std::cout << "b1: " << writeb1 << ", b0: " << writeb0 << ", n: " << writeSampleSize << std::endl;
+    uart.writeToSerialPort(writeb1 + " " + writeb0 + " " + writeSampleSize + "\n");
+    uart.serialToCout();
+    uart.serialToCout();
 
     while (true)
     {
-        // Exit while loop when keystroke is detected
-        if (_kbhit())
-        {
-            _getch(); // Consume the character
-            break;
-        }
+        // // Exit while loop when keystroke is detected
+        // if (_kbhit())
+        // {
+        //     _getch(); // Consume the character
+        //     break;
+        // }
+        std::cout << "Measurement ready... (enter)";
+        getchar();
+        // std::cout << std::endl;
+        uart.writeToSerialPort("\n");
 
         std::string receivedData = uart.readFromSerialPort();
+        std::cout << "RAW: " << receivedData;
         if (!receivedData.empty())
         {
-            // std::cout << receivedData;
-
             sampleData data;
             std::istringstream strm(receivedData);
             strm >> data.sampleNumber;
@@ -78,30 +91,30 @@ int main()
             }
             // std::cout << std::endl;
             logger << "\n";
-
-            int i = 0;
-            float datal[4];
-            std::string temp, vv;
-            if (i = receivedData.find('V') != std::string::npos)
-            {
-                std::string dataNew = receivedData.substr(i + 2);
-                // float data[4];
-                std::istringstream strm(receivedData);
-                std::cout << std::endl;
-                for (int j = 0; j < 10; j++)
-                {
-                    strm >> temp;
-                    std::cout << temp << " ";
-                }
-                std::cout << std::endl;
-                strm >> vv;
-                strm >> datal[0] >> datal[1] >> datal[2] >> datal[3];
-                logger << datal[0] << ";" << datal[1] << ";" << datal[2] << ";" << datal[3];
-                std::cout << "---------b1:" << datal[0] << " b0:" << datal[1] << " r2:" << datal[2] << " se:" << datal[3] << "\n";
-                break;
-            }
-            std::cout << std::endl;
         }
+
+        int i = 0;
+        std::string datal[4];
+        int channel;
+        std::string temp, CC;
+        if (i = receivedData.find('C') != std::string::npos && !receivedData.empty())
+        {
+            size_t pos = receivedData.find('\n');
+            std::string newData = receivedData.substr(pos + 1);
+            std::cout << "\n NEWDATA: " << newData;
+
+            std::istringstream strm2(newData);
+            std::cout << std::endl;
+            for (int k = 0; k < 8; k++)
+            {
+                strm2 >> CC >> channel;
+                strm2 >> datal[0] >> datal[1] >> datal[2] >> datal[3];
+                logger << channel << ";" << datal[0] << ";" << datal[1] << ";" << datal[2] << ";" << datal[3] << "\n";
+                std::cout << "Channel: " << channel << " b1:" << datal[0] << " b0:" << datal[1] << " r2:" << datal[2] << " se:" << datal[3] << "\n";
+            }
+            break;
+        }
+
         Sleep(10);
     }
 
