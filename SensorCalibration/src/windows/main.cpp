@@ -8,13 +8,14 @@
 #include "windowsSerial.hpp"
 #include "windowsConfigManager.hpp"
 #include "windowsLogger.hpp"
+#include "cncControl.hpp"
 
 #define DEFAULT_LOG_DIR "C:"
 
 struct sampleData
 {
     unsigned int sampleNumber;
-    std::vector<int> fingerPositionValues;
+    std::vector<double> fingerPositionValues;
     int loadCellValue;
 };
 
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
     std::string configFilePath = argv[1];
 
     windowsSerial uart;
+    CNCController cnc("COM8");
     windowsConfigManager config(configFilePath);
     int portNumber;
     std::string logDir = config.readString("Settings", "LogDir", DEFAULT_LOG_DIR);
@@ -52,21 +54,17 @@ int main(int argc, char *argv[])
     uart.serialToCout();
     uart.serialToCout();
 
+    // cnc.moveToHomePosition();
+
     while (true)
     {
-        // // Exit while loop when keystroke is detected
-        // if (_kbhit())
-        // {
-        //     _getch(); // Consume the character
-        //     break;
-        // }
-        std::cout << "Measurement ready... (enter)";
-        getchar();
+        // std::cout << "Measurement ready... (enter)";
+        // getchar();
         // std::cout << std::endl;
         uart.writeToSerialPort("\n");
 
         std::string receivedData = uart.readFromSerialPort();
-        std::cout << "RAW: " << receivedData;
+
         if (!receivedData.empty())
         {
             sampleData data;
@@ -81,13 +79,13 @@ int main(int argc, char *argv[])
             }
 
             std::cout << "Sample Nr: " << data.sampleNumber;
-            logger << data.sampleNumber << ";";
+            logger << data.sampleNumber << " ";
             std::cout << " LoadCell data: " << data.loadCellValue << " FingerPosition data:";
             logger << data.loadCellValue;
             for (int i = 0; i < data.fingerPositionValues.size(); i++)
             {
                 std::cout << " " << i << "=" << data.fingerPositionValues.at(i);
-                logger << ";" << data.fingerPositionValues.at(i);
+                logger << " " << data.fingerPositionValues.at(i);
             }
             // std::cout << std::endl;
             logger << "\n";
@@ -101,7 +99,7 @@ int main(int argc, char *argv[])
         {
             size_t pos = receivedData.find('\n');
             std::string newData = receivedData.substr(pos + 1);
-            std::cout << "\n NEWDATA: " << newData;
+            // std::cout << "\n NEWDATA: " << newData;
 
             std::istringstream strm2(newData);
             std::cout << std::endl;
@@ -109,14 +107,16 @@ int main(int argc, char *argv[])
             {
                 strm2 >> CC >> channel;
                 strm2 >> datal[0] >> datal[1] >> datal[2] >> datal[3];
-                logger << channel << ";" << datal[0] << ";" << datal[1] << ";" << datal[2] << ";" << datal[3] << "\n";
-                std::cout << "Channel: " << channel << " b1:" << datal[0] << " b0:" << datal[1] << " r2:" << datal[2] << " se:" << datal[3] << "\n";
+                logger << channel << " " << datal[0] << " " << datal[1] << " " << datal[2] << " " << datal[3] << "\n";
+                std::cout << "Channel: " << channel << " b1:" << datal[0] << " b0:" << datal[1] << " r2:" << datal[2] << " se:" << datal[3] << std::endl;
             }
             break;
         }
-
-        Sleep(10);
+        std::cout << std::endl;
+        cnc.moveRelativeZ(-0.1);
+        Sleep(1000);
     }
-
+    cnc.moveRelativeZ(1.0);            // move the cnc back
+    uart.writeToSerialPort("RESET\n"); // reset the arduino
     return 0;
 }

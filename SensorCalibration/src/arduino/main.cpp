@@ -16,7 +16,7 @@ nau7802 *loadCell;
 
 unsigned int i = 0;
 unsigned int sampleSize;
-float referenceValues[MAX_SAMPLE], vingerposition[ADS_CHANNEL_AMOUNT][MAX_SAMPLE];
+double referenceValues[MAX_SAMPLE], vingerposition[ADS_CHANNEL_AMOUNT][MAX_SAMPLE];
 int32_t sOffset = 0x0000;
 float sCalFactor = 0.0f;
 char receivedBytes[255];
@@ -54,6 +54,7 @@ void setup()
   loadCell = new nau7802(&sensorcom::WireSensorB);
   fingerPositionSensor->resetStatus();
   SerialPC::waitForSerial();
+  SerialPC::setupReset();
 
   readValues(sOffset, sCalFactor, sampleSize);
   loadCell->setCalibrationValues(sOffset, sCalFactor, 0);
@@ -68,10 +69,10 @@ void setup()
 void loop()
 {
   heartbeat::updateHeartBeat();
-
   // if (heartbeat::runPolling())
   if (Serial.available() > 0) // Only measure when character is send
   {
+    SerialPC::resetByCommand();
     Serial.read(); // consume character
 
     loadCell->readLoadCell();
@@ -95,7 +96,7 @@ void loop()
     {
       for (int channel = 0; channel < 8; channel++)
       {
-        LinearRegression fingerPositionRegression = LinearRegression(referenceValues, vingerposition[channel], sampleSize);
+        LinearRegression fingerPositionRegression = LinearRegression(vingerposition[channel], referenceValues, sampleSize);
         struct linearValue myValue = fingerPositionRegression.calcAlphaBeta();
         float r2 = fingerPositionRegression.calcR2();
         float se = fingerPositionRegression.calcStandardError();

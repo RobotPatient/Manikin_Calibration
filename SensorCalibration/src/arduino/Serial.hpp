@@ -2,6 +2,7 @@
 #define SERIAL_HPP
 
 #include <Arduino.h>
+#include <wdt_samd21.h>
 
 namespace SerialPC
 {
@@ -50,6 +51,25 @@ namespace SerialPC
     Serial.print(" ");
     Serial.print(se);
     Serial.print(" ");
+  }
+  void setupReset()
+  {
+    wdt_init(WDT_CONFIG_PER_64);
+    wdt_disable();
+  }
+  void resetByCommand()
+  {
+    if (Serial.available())
+    {
+      String command = Serial.readStringUntil('\n');
+      if (command == "RESET")
+      {
+        wdt_reEnable(); // Enable watchdog timer
+        while (1)
+        {
+        } // Wait for reset
+      }
+    }
   }
 
 } // namespace SerialPC
