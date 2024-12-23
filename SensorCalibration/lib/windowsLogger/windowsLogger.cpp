@@ -11,7 +11,7 @@ windowsLogger::windowsLogger(const std::string &directory, bool createFile) : _d
     {
         return;
     }
-    const std::string filePath = directory + createFileName();
+    const std::string filePath = directory + "\\" + createFileName();
     _outFile = new std::ofstream(filePath);
     std::cout << filePath.c_str() << std::endl;
     if (!_outFile->is_open())
