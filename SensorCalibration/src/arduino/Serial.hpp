@@ -33,13 +33,15 @@ namespace SerialPC
     Serial.print(F("Nr;LoadCell;")); // excpect another colum
   }
 
-  void printRegression(linearValue myValue, float r2, float se)
+  void printRegression(linearValue myValue, float r2, float se, int channel)
   {
     if (!Serial)
     {
       return;
     }
-    Serial.print("V ");
+    Serial.print("C ");
+    Serial.print(channel);
+    Serial.print(" ");
     Serial.print(myValue.b1);
     Serial.print(" ");
     Serial.print(myValue.b0);
@@ -47,6 +49,7 @@ namespace SerialPC
     Serial.print(r2);
     Serial.print(" ");
     Serial.print(se);
+    Serial.print(" ");
   }
 
 } // namespace SerialPC
