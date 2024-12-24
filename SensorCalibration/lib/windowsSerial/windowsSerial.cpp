@@ -1,8 +1,11 @@
 #include "windowsSerial.hpp"
 
-windowsSerial::windowsSerial(const std::string &portName, int baudrate) : _portName{portName}, _baudrate{baudrate}
+windowsSerial::windowsSerial(const std::string &portName, int baudrate, bool configurePort) : _portName{portName}, _baudrate{baudrate}
 {
-    configureSerialPort();
+    if (configurePort)
+    {
+        configureSerialPort();
+    }
 }
 
 windowsSerial::windowsSerial()
@@ -24,6 +27,11 @@ void windowsSerial::setNewPort(int portNumber)
     _portName = "COM" + std::to_string(portNumber);
 }
 
+void windowsSerial::setNewBaudrate(int baudrate)
+{
+    _baudrate = baudrate;
+}
+
 std::string windowsSerial::getPort()
 {
     return _portName;
@@ -31,6 +39,7 @@ std::string windowsSerial::getPort()
 
 int windowsSerial::configureSerialPort()
 {
+    std::cout << "Port: " << _portName << ", baud: " << _baudrate << std::endl;
     _hSerial = CreateFile(_portName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (_hSerial == INVALID_HANDLE_VALUE)
     {

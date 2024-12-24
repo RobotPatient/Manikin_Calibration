@@ -26,6 +26,13 @@ uint8_t ads7138::writeToRegister(byte registerAddr, byte command)
     return _wire->endTransmission();
 }
 
+// Channel Numbers
+//      5
+//      4
+//  7       2
+//      3
+//  0       1
+//      6
 int ads7138::readChannel(byte channel)
 {
     writeToRegister(CHANNEL_SEL, channel);

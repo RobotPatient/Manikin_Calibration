@@ -5,6 +5,14 @@
 // Based on datasheet https://www.ti.com/lit/ds/symlink/ads7138.pdf?ts=1689706366614
 // J.A. Korten, July 19, 2023
 
+// Channel Numbers
+//      5
+//      4
+//  7       2
+//      3
+//  0       1
+//      6
+
 #define ADS_CHANNEL_AMOUNT 8
 
 #define SYSTEM_STATUS 0x00

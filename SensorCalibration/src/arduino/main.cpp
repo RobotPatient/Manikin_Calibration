@@ -14,8 +14,9 @@
 ads7138 *fingerPositionSensor;
 nau7802 *loadCell;
 
-unsigned int i = 0;
+unsigned int sampleNumber = 0;
 unsigned int sampleSize;
+unsigned int positionIndexGlobal = 0;
 double referenceValues[MAX_SAMPLE], vingerposition[ADS_CHANNEL_AMOUNT][MAX_SAMPLE];
 int32_t sOffset = 0x0000;
 float sCalFactor = 0.0f;
@@ -78,32 +79,29 @@ void loop()
     loadCell->readLoadCell();
     fingerPositionSensor->readValues();
     // TODO: write to memory? (sd card needed on hardware stuffs)
-    if (Serial)
-    {
-      referenceValues[i] = loadCell->getValue();
-      for (int channel = 0; channel < 8; channel++)
-      {
-        vingerposition[channel][i] = fingerPositionSensor->getValue(channel);
-      }
-      Serial.print(i++);
-      loadCell->printValue(SEPERATION_CHAR);
-      fingerPositionSensor->printValues(SEPERATION_CHAR);
-      Serial.println();
-      Serial.flush();
-    }
 
-    if (i == sampleSize) // if there are n samples, calculate the regression values
+    referenceValues[sampleNumber] = loadCell->getValue();
+    for (int positionIndex = 0; positionIndex < 8; positionIndex++)
     {
-      for (int channel = 0; channel < 8; channel++)
-      {
-        LinearRegression fingerPositionRegression = LinearRegression(vingerposition[channel], referenceValues, sampleSize);
-        struct linearValue myValue = fingerPositionRegression.calcAlphaBeta();
-        float r2 = fingerPositionRegression.calcR2();
-        float se = fingerPositionRegression.calcStandardError();
-        SerialPC::printRegression(myValue, r2, se, channel);
-      }
+      vingerposition[positieToChannel[positionIndex]][sampleNumber] = fingerPositionSensor->getValue(positieToChannel[positionIndex]);
+    }
+    Serial.print(sampleNumber++);
+    loadCell->printValue(SEPERATION_CHAR);
+    fingerPositionSensor->printValues(SEPERATION_CHAR);
+    Serial.println();
+    Serial.flush();
+
+    if (sampleNumber == sampleSize) // if there are n samples, calculate the regression values
+    {
+
+      LinearRegression fingerPositionRegression = LinearRegression(vingerposition[positieToChannel[positionIndexGlobal]], referenceValues, sampleSize);
+      struct linearValue myValue = fingerPositionRegression.calcAlphaBeta();
+      float r2 = fingerPositionRegression.calcR2();
+      float se = fingerPositionRegression.calcStandardError();
+      SerialPC::printRegression(myValue, r2, se, positieToChannel[positionIndexGlobal++]);
       Serial.println();
       Serial.flush();
+      sampleNumber = 0;
     }
   }
 }

@@ -12,11 +12,12 @@ private:
     int _baudrate;
     /* data */
 public:
-    windowsSerial(const std::string &portName, int baudrate = 115200);
+    windowsSerial(const std::string &portName, int baudrate = 115200, bool configurePort = false);
     windowsSerial();
     ~windowsSerial();
     void setNewPort(const std::string &portName);
     void setNewPort(int portNumber);
+    void setNewBaudrate(int baudrate);
     std::string getPort();
     int configureSerialPort();
     void writeToSerialPort(const std::string &data);

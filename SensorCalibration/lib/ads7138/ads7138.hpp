@@ -47,6 +47,7 @@ public:
      * @param channel The channel which needs to be read out
      * @return returns raw value of given channel
      */
+
     int readChannel(byte channel);
 
     /*!

@@ -17,3 +17,19 @@
 #define W2_SCL 13 // PA17
 #define W2_SDA 11 // PA16
 #endif
+
+// Movement Pattern
+//      0
+//      1
+//  2       7
+//      3
+//  4       6
+//      5
+// Channel Numbers
+//      5
+//      4
+//  7       2
+//      3
+//  0       1
+//      6
+const int positieToChannel[8] = {5, 4, 7, 3, 0, 6, 1, 2};
