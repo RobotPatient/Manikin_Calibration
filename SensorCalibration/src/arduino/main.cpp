@@ -10,6 +10,7 @@
 #include "ads7138_definitions.hpp"
 #include "ads7138.hpp"
 #include "nau7802.hpp"
+#include "matrix.hpp"
 
 ads7138 *fingerPositionSensor;
 nau7802 *loadCell;
@@ -22,29 +23,7 @@ int32_t sOffset = 0x0000;
 float sCalFactor = 0.0f;
 char receivedBytes[255];
 char receivedBytes2[255];
-
-void readValues(int32_t &intValue, float &floatValue, unsigned int &value)
-{
-  String input;
-
-  // Lees de tweede float waarde tot aan de newline
-  input = Serial.readStringUntil(' ');
-  floatValue = input.toFloat();
-
-  // Lees de eerste int32_t waarde tot aan de spatie
-  input = Serial.readStringUntil(' ');
-  intValue = input.toInt();
-
-  // Lees de eerste int32_t waarde tot aan de spatie
-  input = Serial.readStringUntil('\n');
-  value = input.toInt();
-
-  Serial.print(floatValue);
-  Serial.print(" ");
-  Serial.print(intValue);
-  Serial.print(" ");
-  Serial.println(value);
-}
+matrix<float, 3, 3> test;
 
 void setup()
 {
@@ -57,7 +36,7 @@ void setup()
   SerialPC::waitForSerial();
   SerialPC::setupReset();
 
-  readValues(sOffset, sCalFactor, sampleSize);
+  SerialPC::readValues(sOffset, sCalFactor, sampleSize);
   loadCell->setCalibrationValues(sOffset, sCalFactor, 0);
   loadCell->calibrateInternal();
   // loadCell->calibrateExternal();
@@ -73,12 +52,13 @@ void loop()
   // if (heartbeat::runPolling())
   if (Serial.available() > 0) // Only measure when character is send
   {
-    SerialPC::resetByCommand();
+    String command = SerialPC::readCommand();
+    // fsm->handleState(command);
+    SerialPC::resetByCommand(command);
     Serial.read(); // consume character
 
     loadCell->readLoadCell();
     fingerPositionSensor->readValues();
-    // TODO: write to memory? (sd card needed on hardware stuffs)
 
     referenceValues[sampleNumber] = loadCell->getValue();
     for (int positionIndex = 0; positionIndex < 8; positionIndex++)

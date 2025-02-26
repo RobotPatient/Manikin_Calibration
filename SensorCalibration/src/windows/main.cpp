@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         for (int samples = 0; samples < 10; samples++)
         {
 
-            uart.writeToSerialPort("\n");
+            uart.writeToSerialPort("READY\n");
 
             std::string receivedData = uart.readFromSerialPort();
 

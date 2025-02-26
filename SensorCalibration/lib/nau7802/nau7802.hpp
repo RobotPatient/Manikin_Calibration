@@ -12,8 +12,8 @@ class nau7802
 private:
     NAU7802 *_loadCell;
     TwoWire *_wire;
-    int32_t _value, _offset;
-    float _calibrationFactor;
+    int32_t _offset;
+    float _value, _calibrationFactor;
 
     /*!
      * @brief Clears the Serial buffer and waits until a key is pressed
@@ -66,6 +66,14 @@ public:
      */
     void calibrateExternal();
 
+    /*!
+     * @brief
+     *
+     *
+     * @param newOffset
+     * @param newCalibrationFactor
+     * @param newGain
+     */
     void setCalibrationValues(int32_t newOffset, float newCalibrationFactor, int32_t newGain);
 };
 

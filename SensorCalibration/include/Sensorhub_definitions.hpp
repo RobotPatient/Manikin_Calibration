@@ -1,3 +1,6 @@
+#ifndef SENSORHUB_DEFINITIONS_HPP
+#define SENSORHUB_DEFINITIONS_HPP
+
 #ifdef __SAMD21G18A__
 
 #define ADS7138_ADDR 0x10
@@ -33,3 +36,5 @@
 //  0       1
 //      6
 const int positieToChannel[8] = {5, 4, 7, 3, 0, 6, 1, 2};
+
+#endif

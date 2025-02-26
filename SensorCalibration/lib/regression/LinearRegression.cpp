@@ -42,24 +42,32 @@ double LinearRegression::calcAverage(double *numbers, unsigned int amount)
     return sum / (double)amount;
 }
 
+/*!
+ * @brief Calculates \f$b_1\f$ and \f$b_0\f$ and uses the formulas:
+ * \f[
+ * b_1 = \frac{\sum_{i=0}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=0}^{n} (x_i - \bar{x})^2}
+ * \f]
+ * \f[
+ * b_0 = \bar{y} - b_1 \bar{x}
+ * \f]
+ *
+ * @return struct with both \f$b_1\f$ and \f$b_0\f$
+ */
 linearValue LinearRegression::calcAlphaBeta()
 {
     // _dependantValue = b1 * _independentValue + b0
-    double xy = 0.0f, x2 = 0.0f, xtussen;
+    double numerator = 0.0f, denominator = 0.0f, deltaX;
     double dependantAverage = calcAverage(_dependantValue, _sampleAmount);
     double independentAverage = calcAverage(_independentValue, _sampleAmount);
 
-    // _linearValue.b1 = -1.0f;
-    // _linearValue.b0 = -1.0f;
-
     for (unsigned int i = 0; i < _sampleAmount; i++)
     {
-        xtussen = _independentValue[i] - independentAverage;
-        xy += xtussen * (_dependantValue[i] - dependantAverage);
-        x2 += xtussen * xtussen;
+        deltaX = _independentValue[i] - independentAverage;
+        numerator += deltaX * (_dependantValue[i] - dependantAverage);
+        denominator += deltaX * deltaX;
     }
 
-    _linearValue.b1 = xy / x2;
+    _linearValue.b1 = numerator / denominator;
     _linearValue.b0 = dependantAverage - _linearValue.b1 * independentAverage;
     return _linearValue;
 }
@@ -76,28 +84,33 @@ double LinearRegression::getYValue(int i)
 
 double LinearRegression::calcR2()
 {
-    double yl = 0.0f, yr = 0.0f, ytussenl, ytussenr;
-    double dependantAverage = calcAverage(_dependantValue, _sampleAmount);
+    double sumSquaredResiduals = 0.0f;
+    double sumSquaredTotal = 0.0f;
+    double dependentAvg = calcAverage(_dependantValue, _sampleAmount);
+    double predictedValue, residual, totalVariation;
 
     for (unsigned int i = 0; i < _sampleAmount; i++)
     {
-        ytussenl = calcPredictedValue(_independentValue[i]) - dependantAverage;
-        ytussenr = _dependantValue[i] - dependantAverage;
-        yl += ytussenl * ytussenl;
-        yr += ytussenr * ytussenr;
+        predictedValue = calcPredictedValue(_independentValue[i]);
+        residual = predictedValue - dependentAvg;
+        totalVariation = _dependantValue[i] - dependentAvg;
+
+        sumSquaredResiduals += residual * residual;
+        sumSquaredTotal += totalVariation * totalVariation;
     }
 
-    return _r2 = yl / yr;
+    return _r2 = sumSquaredResiduals / sumSquaredTotal;
 }
 
 double LinearRegression::calcStandardError()
 {
-    double ytussen, ysom = 0.0f;
+    double sumSquaredErrors = 0.0f;
+    double error;
     for (unsigned int i = 0; i < _sampleAmount; i++)
     {
-        ytussen = calcPredictedValue(_independentValue[i]) - _dependantValue[i];
-        ysom += ytussen * ytussen;
+        error = calcPredictedValue(_independentValue[i]) - _dependantValue[i];
+        sumSquaredErrors += error * error;
     }
 
-    return _standardError = sqrt(ysom / (_sampleAmountFloat - _order));
+    return _standardError = sqrt(sumSquaredErrors / (_sampleAmountFloat - _order));
 }

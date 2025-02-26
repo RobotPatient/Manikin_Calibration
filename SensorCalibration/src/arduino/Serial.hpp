@@ -57,19 +57,47 @@ namespace SerialPC
     wdt_init(WDT_CONFIG_PER_64);
     wdt_disable();
   }
-  void resetByCommand()
+  void resetByCommand(String command)
   {
-    if (Serial.available())
+    if (command == "RESET")
     {
-      String command = Serial.readStringUntil('\n');
-      if (command == "RESET")
+      wdt_reEnable(); // Enable watchdog timer
+      while (1)
       {
-        wdt_reEnable(); // Enable watchdog timer
-        while (1)
-        {
-        } // Wait for reset
-      }
+      } // Wait for reset
     }
+  }
+
+  String readCommand()
+  {
+    if (Serial.available() <= 0)
+    {
+      return "\0";
+    }
+    return Serial.readStringUntil('\n');
+  }
+
+  void readValues(int32_t &intValue, float &floatValue, unsigned int &value)
+  {
+    String input;
+
+    // Lees de tweede float waarde tot aan de newline
+    input = Serial.readStringUntil(' ');
+    floatValue = input.toFloat();
+
+    // Lees de eerste int32_t waarde tot aan de spatie
+    input = Serial.readStringUntil(' ');
+    intValue = input.toInt();
+
+    // Lees de eerste int32_t waarde tot aan de spatie
+    input = Serial.readStringUntil('\n');
+    value = input.toInt();
+
+    Serial.print(floatValue);
+    Serial.print(" ");
+    Serial.print(intValue);
+    Serial.print(" ");
+    Serial.println(value);
   }
 
 } // namespace SerialPC
