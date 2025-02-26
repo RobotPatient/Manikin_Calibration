@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Windows Program",
+            "type": "shell",
+            "command": "platformio",
+            "args": [
+                "run",
+                "--environment",
+                "windows"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$platformio"
+            ]
+        },
+        {
+            "label": "Run Windows Program",
+            "type": "shell",
+            "command": "${workspaceFolder}/.pio/build/config_uploader_windows/program.exe",
+            "args": [
+                "${workspaceFolder}/config.ini"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
