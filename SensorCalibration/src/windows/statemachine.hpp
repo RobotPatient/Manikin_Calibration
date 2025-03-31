@@ -31,15 +31,7 @@ struct SampleData
 class StateMachine
 {
 public:
-    StateMachine(const std::string &configFilePath)
-        : config(configFilePath),
-          logger(config.readString("Settings", "LogDir", DEFAULT_LOG_DIR)),
-          uart(config.readString("Settings", "Port", "ERROR"), config.readInt("Settings", "BaudRate", 0)),
-          cnc(config.readString("cnc_settings", "Port", "ERROR"), config.readInt("cnc_settings", "BaudRate", 0)),
-          currentState(State::INITIALIZATION),
-          position(0),
-          samples(0) {}
-
+    StateMachine(const std::string &configFilePath);
     void run();
 
 private:

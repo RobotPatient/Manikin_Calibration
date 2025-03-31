@@ -1,5 +1,17 @@
 #include "statemachine.hpp"
 
+StateMachine::StateMachine(const std::string &configFilePath)
+    : config(configFilePath),
+      logger(config.readString("Settings", "LogDir", DEFAULT_LOG_DIR)),
+      uart(config.readString("Settings", "Port", "ERROR"), config.readInt("Settings", "BaudRate", 0)),
+      cnc(config.readString("cnc_settings", "Port", "ERROR"), config.readInt("cnc_settings", "BaudRate", 0)),
+      currentState(State::INITIALIZATION),
+      position(0),
+      samples(0)
+{
+    // check for errors while setting up?
+}
+
 void StateMachine::run()
 {
     while (currentState != State::DONE)
@@ -82,9 +94,11 @@ void StateMachine::performSampling()
         if (parseSampleData(receivedData, data))
         {
             logger << data.sampleNumber << " " << data.loadCellValue;
+            std::cout << "Sample Nr: " << data.sampleNumber << " LoadCell data: " << data.loadCellValue << " FingerPosition data:";
             for (const auto &val : data.fingerPositionValues)
             {
                 logger << " " << val;
+                std::cout << " " << val;
             }
             logger << "\n";
         }
@@ -123,21 +137,26 @@ bool StateMachine::parseSampleData(const std::string &receivedData, SampleData &
     }
 
     size_t pos = receivedData.find('C');
+    if (pos == std::string::npos)
+    {
+        return true;
+    }
+
+    pos = receivedData.find('\n', pos);
     if (pos != std::string::npos)
     {
-        pos = receivedData.find('\n', pos);
-        if (pos != std::string::npos)
-        {
-            std::string newData = receivedData.substr(pos + 1);
-            std::istringstream strm2(newData);
-            std::string CC, channel, datal[4];
-            if (strm2 >> CC >> channel >> datal[0] >> datal[1] >> datal[2] >> datal[3])
-            {
-                logger << channel << " " << datal[0] << " " << datal[1] << " " << datal[2] << " " << datal[3] << "\n";
-                std::cout << "Channel: " << channel << " b1:" << datal[0] << " b0:" << datal[1] << " r2:" << datal[2] << " se:" << datal[3] << std::endl;
-            }
-        }
+        return false;
     }
+
+    std::string newData = receivedData.substr(pos + 1);
+    std::istringstream strm2(newData);
+    std::string CC, channel, datal[4];
+    if (strm2 >> CC >> channel >> datal[0] >> datal[1] >> datal[2] >> datal[3])
+    {
+        logger << channel << " " << datal[0] << " " << datal[1] << " " << datal[2] << " " << datal[3] << "\n";
+        std::cout << "Channel: " << channel << " b1:" << datal[0] << " b0:" << datal[1] << " r2:" << datal[2] << " se:" << datal[3] << std::endl;
+    }
+
     return true;
 }
 
