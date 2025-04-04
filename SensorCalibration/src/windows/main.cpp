@@ -16,7 +16,7 @@ struct sampleData
 {
     unsigned int sampleNumber;
     std::vector<double> fingerPositionValues;
-    int loadCellValue;
+    double loadCellValue;
 };
 
 int main(int argc, char *argv[])
@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
             uart.writeToSerialPort("READY\n");
 
             std::string receivedData = uart.readFromSerialPort();
+            // std::cout << receivedData << std::endl;
 
             if (!receivedData.empty())
             {
@@ -77,7 +78,7 @@ int main(int argc, char *argv[])
                 std::istringstream strm(receivedData);
                 strm >> data.sampleNumber;
                 strm >> data.loadCellValue;
-                int fingerValue;
+                double fingerValue;
                 for (int i = 0; i < 8; i++)
                 {
                     strm >> fingerValue;

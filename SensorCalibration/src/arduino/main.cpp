@@ -34,6 +34,7 @@ void setup()
   loadCell = new nau7802(&sensorcom::WireSensorB);
   fingerPositionSensor->resetStatus();
   SerialPC::waitForSerial();
+  // Serial.println("Serial Connected!\n");
   SerialPC::setupReset();
 
   SerialPC::readValues(sOffset, sCalFactor, sampleSize);
